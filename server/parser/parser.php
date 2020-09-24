@@ -55,8 +55,29 @@ function getEntriesAndRelations($content) {
 	return $arrayEntriesAndRelations[0];
 }
 
+// Retourne la liste des entrées
+function getEntries($content) {
+	$arrayEntries = array();
+	preg_match_all("/(e;[0-9]+;\'[\w\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.+>=&;:?! -]+\';[0-9]+;[0-9]+.*)/m", $content, $arrayEntries);
+	return $arrayEntries[0];
+}
+
+// Retourne la liste des relations entrantes
+function getRelationsIn($content, $IdFirstWord) {
+	$arrayRelationsIn = array();
+	preg_match_all("/(r;[0-9]+;[0-9]+;".$IdFirstWord."+;[0-9]+;[0-9]+)/m", $content, $arrayRelationsIn);
+	return $arrayRelationsIn[0];
+}
+
+// Retourne la liste des relations sortantes
+function getRelationsOut($content, $IdFirstWord) {
+	$arrayRelationsOut = array();
+	preg_match_all("/(r;[0-9]+;".$IdFirstWord."+;[0-9]+;[0-9]+;[0-9]+)/m", $content, $arrayRelationsOut);
+	return $arrayRelationsOut[0];
+}
+
 // Récupere l'ID du mot rechercher
-function getIDWord($firstEntree) {
+function getIDFirstWord($firstEntree) {
 	return explode(";", $firstEntree)[1];
 }
 
@@ -72,34 +93,70 @@ function curl_get_contents($url) {
 	return $data;
 }
 
-function parseArrayToJson($arrayEntriesAndRelations) {
-	$json = "{
-			  \"Noeud\" : [";
-			  
-	foreach ($arrayEntriesAndRelations as $value) {
-		
-	}
-}
-
 function parse($string, $content) {
-	$arrayEntriesAndRelations = getEntriesAndRelations($content);
-	if (empty($arrayEntriesAndRelations)) {
+	// $arrayEntriesAndRelations = getEntriesAndRelations($content);
+	// if (empty($arrayEntriesAndRelations)) {
+	// 	echo "Le terme '".$string."' est inexistant ou un problème est survenu lors de la récupération des données";
+	// 	return "DATA_IS_EMPTY";
+	// }
+	
+	$arrayEntries = getEntries($content);
+	
+	if (empty($arrayEntries)) {
 		echo "Le terme '".$string."' est inexistant ou un problème est survenu lors de la récupération des données";
 		return "DATA_IS_EMPTY";
 	}
+
+	echo "=============== DEFINITIONS ================";
+	echo "<br>";
 	
 	$definition = getDefinitions($content);
-
 	echo $definition;
-
+	
+	echo "<br><br>";
+	echo "=============== ENTREES ================";
 	echo "<br><br>";
 
-	foreach ($arrayEntriesAndRelations as $value) {
+	foreach ($arrayEntries as $value) {
 		echo $value."<br>";
 	}
 
-	$stringEntriesAndRelations = "<stringEntriesAndRelations>\n".implode("<br>", $arrayEntriesAndRelations);
-	$dataArray = array("definition" => $definition, "nextLine" => "\n", "entrees&relations" => $stringEntriesAndRelations);
+	echo "<br><br>";
+	echo "=============== RELATIONS ENTRANTES ================";
+	echo "<br><br>";
+	
+	$IDFirstWord = getIDFirstWord($arrayEntries[0]);
+	$arrayRelationsIn = getRelationsIn($content, $IDFirstWord);
+	
+	foreach ($arrayRelationsIn as $value) {
+		echo $value."<br>";
+	}
+
+	echo "<br><br>";
+	echo "=============== RELATIONS SORTANTES ================\n";
+	echo "<br><br>";
+	
+	$arrayRelationsOut = getRelationsOut($content, $IDFirstWord);
+	
+	foreach ($arrayRelationsOut as $value) {
+		echo $value."<br>";
+	}
+
+	// foreach ($arrayEntriesAndRelations as $value) {
+	// 	echo $value."<br>";
+	// }
+
+	// $stringEntriesAndRelations = "<stringEntriesAndRelations>\n".implode("<br>", $arrayEntriesAndRelations);
+	// $dataArray = array("definition" => $definition, "nextLine" => "\n", "entrees&relations" => $stringEntriesAndRelations);
+
+	$stringEntries = "<stringEntries>".implode("<br>", $arrayEntries);
+	$stringRelationsIn = "<stringRelationsIn>".implode("<br>", $arrayRelationsIn);
+	$stringRelationsOut = "<stringRelationsOut>".implode("<br>", $arrayRelationsOut);
+
+	$dataArray = array("definition" => $definition,
+					   "stringEntries" => $stringEntries,
+					   "stringRelationsIn" => $stringRelationsIn,
+					   "stringRelationsOut" => $stringRelationsOut);
 
 	return $dataArray;
 }
