@@ -100,4 +100,4 @@ function createNewCache($string, $content) {
 	file_put_contents("cache/".$string."-".$crypteString.".cache", $content);
 }
 
-//Nasser
+//omar
