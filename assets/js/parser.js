@@ -10,6 +10,7 @@ $(document).ready(function(){
 
 
 function getWordDescription(search) {
+    //remeise a zéro
     document.getElementById("PutWord").innerHTML = '';
 
         document.getElementById("ba").innerHTML = "";
@@ -17,13 +18,14 @@ function getWordDescription(search) {
         
         document.getElementById("spinner").style.display = "";
 
+        //vérification du champ pour récupéré le mot a rechercher
         let word ="" ;
         if(typeof search !== 'undefined' || document.getElementById("searchedWord").value == ''){  
             word = search;
         } else {
             word = document.getElementById("searchedWord").value;
         }
-
+        //récup du mot pour l'afficher
         document.getElementById("PutWord").innerHTML = word;
         
         $.ajax({
