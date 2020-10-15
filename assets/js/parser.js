@@ -10,6 +10,8 @@ $(document).ready(function(){
 
 
 function getWordDescription(search) {
+    document.getElementById("PutWord").innerHTML = '';
+
         document.getElementById("ba").innerHTML = "";
         document.getElementById("definition").innerHTML = "";
         
@@ -22,6 +24,7 @@ function getWordDescription(search) {
             word = document.getElementById("searchedWord").value;
         }
 
+        document.getElementById("PutWord").innerHTML = word;
         
         $.ajax({
             url: 'http://localhost/e-app/server/index.php',
