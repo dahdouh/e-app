@@ -74,6 +74,14 @@
 
         <br/>
 
+        <div class="card-header" id="WordPut">
+          <h5 class="mb-0">
+            <div id="PutWord"> 
+              
+            </div>
+          </h5>
+        </div>
+
         <div id="accordion">
           <div class="card">
             <div class="card-header" id="headingOne result">

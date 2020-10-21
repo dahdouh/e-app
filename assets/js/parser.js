@@ -10,19 +10,27 @@ $(document).ready(function(){
 
 
 function getWordDescription(search) {
+    //remeise a zéro
+    document.getElementById("PutWord").innerHTML = '';
+
         document.getElementById("ba").innerHTML = "";
         document.getElementById("definition").innerHTML = "";
 
         document.getElementById("spinner").style.display = "";
 
+<<<<<<< HEAD
         var type_relation = document.getElementById("type_relation").value;
+=======
+        //vérification du champ pour récupéré le mot a rechercher
+>>>>>>> 0c941c476a20c77327f27cc9d64be55d7a41ee1d
         let word ="" ;
         if(typeof search !== 'undefined' || document.getElementById("searchedWord").value == ''){  
             word = search;
         } else {
             word = document.getElementById("searchedWord").value;
         }
-
+        //récup du mot pour l'afficher
+        document.getElementById("PutWord").innerHTML = word;
         
         $.ajax({
             url: 'http://localhost/e-app/server/index.php',
