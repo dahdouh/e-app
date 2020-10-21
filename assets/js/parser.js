@@ -9,113 +9,172 @@ $(document).ready(function(){
 })
 
 
-function getWordDescription() {
+function getWordDescription(search) {
+    //remeise a zéro
+    document.getElementById("PutWord").innerHTML = '';
+
+        document.getElementById("ba").innerHTML = "";
+        document.getElementById("definition").innerHTML = "";
+
+        document.getElementById("spinner").style.display = "";
+
+<<<<<<< HEAD
+        var type_relation = document.getElementById("type_relation").value;
+=======
+        //vérification du champ pour récupéré le mot a rechercher
+>>>>>>> 0c941c476a20c77327f27cc9d64be55d7a41ee1d
+        let word ="" ;
+        if(typeof search !== 'undefined' || document.getElementById("searchedWord").value == ''){  
+            word = search;
+        } else {
+            word = document.getElementById("searchedWord").value;
+        }
+        //récup du mot pour l'afficher
+        document.getElementById("PutWord").innerHTML = word;
+        
+        $.ajax({
+            url: 'http://localhost/e-app/server/index.php',
+            type: 'GET',
+            data: 'word=' + word,
+
+            success: function(data) {
+                document.getElementById("spinner").style.display = "none";
+                document.getElementById("searchedWord").value = "";
+                //$("#ba").html(data);
+                //console.log(data);
+                //var htmlTagRe = /<\/?[\w\s="/.':;#-\/\?]+>/gi;
+                //var plainText = html.replace(htmlTagRe, '');
+                //var str = "The rain in SPAIN stays mainly in the plain";
+                //var res = data.match(//<\s*def[^>]*>(.*?)<\s*/\s*def>/g);
+                //var res = data.match(/(e;[0-9]+;\'[\w\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.+>=&;:?! -]+\';[0-9]+;[0-9]+.*)|(r;[0-9]+;[0-9]+;[0-9]+;[0-9]+;[0-9]+)/m);
+                
+                //var str = "<def><br />  Université. (forme utilisée surtout en Belgique)</def>";
+                
+
+                var str = data.replace(/(\r\n|\n|\r)/gm," ");
+                var definitions = str.match(/<def>(.*?)<\/def>/g).map(function(val){
+                                            return val.replace(/<\/?def>/g,'');
+                                            });
+                //definitions.forEach(item => console.log(item));
+                
+                definitions.forEach(item => {
+                    var data = '<div class="alert alert-primary" role="alert"> '+item+'</div>';
+                    document.getElementById('definition').innerHTML += data;
+
+                });
+
+                str = data.replace(/(\r\n|\n|\r)/gm," ");
+
+                var entries =[];
+                var all_entries = [];
+                var IdFirstWord = "";
+                var rel_sortantes = [];
+                var rel_entrantes = [];
+                
+                //toutes les entrées
+                entries = str.match(/(e;[0-9]+;\'[\w\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.+>=&;:?! -]+\';[0-9]+;[0-9]+.*)|(r;[0-9]+;[0-9]+;[0-9]+;[0-9]+;[0-9]+)/g).map(function(val){
+                    return val.replace(/<\/?def>/g,'');
+                    });
+                
+                all_entries = entries.toString().split("<br>");
+                IdFirstWord = all_entries[0].split(";")[1];
+
+                //si l'utilisateur n'a choisi aucun tyoe de relation
+                if( type_relation === '-1'){                      
+                    //relation sortantes
+                    rel_sortantes = str.match(new RegExp('(r;[0-9]+;[0-9]+;'+IdFirstWord+';[0-9]+;[0-9]+)','g')).map(function(val){
+                        return val.replace(/<\/?def>/g,'');
+                    }); 
+                    //relation entrantes
+                    rel_entrantes = str.match(new RegExp('(r;[0-9]+;'+IdFirstWord+';[0-9]+;[0-9]+;[0-9]+)','g')).map(function(val){
+                        return val.replace(/<\/?def>/g,'');
+                        });
+                    console.log(rel_sortantes);
+
+                } else {
+                    //relation sortantes
+                    rel_sortantes = str.match(new RegExp('(r;[0-9]+;[0-9]+;'+IdFirstWord+';'+ type_relation +';[0-9]+)','g')).map(function(val){
+                        return val.replace(/<\/?def>/g,'');
+                    }); 
+                    //relation entrantes
+                    rel_entrantes = str.match(new RegExp('(r;[0-9]+;'+IdFirstWord+';[0-9]+;'+ type_relation +';[0-9]+)','g')).map(function(val){
+                        return val.replace(/<\/?def>/g,'');
+                        });
+
+                }
+                
+                //console.log(IdFirstWord)
+                
+                var filtred_entries = [];
+                //relations sortantes       
+                rel_sortantes.forEach(item => {
+                    var one_entry=item.split(";");
+                    filtred_entries.push(one_entry[2]); 
+                });
+
+                //relations entrantes
+                rel_entrantes.forEach(item => {
+                    var one_entry=item.split(";");
+                    filtred_entries.push(one_entry[3]); 
+                });
+
+    
+        
+                /**
+                 * récuperer les mots comme résultat de recherche
+                 */
+                //Mots de relations entrantes;
+                var mots_sorted = [];
+                filtred_entries.slice(1, 40).forEach(item => {
+
+                    //entrées
+                    var correspond_entries = str.match(new RegExp("(e;"+item+";.*;[0-9]+;[0-9]+)",'g')).map(function(val){
+                        return val.replace(/<\/?def>/g,'');
+                    });
+
+                    correspond_entries.forEach(item => {
+                        var word_entry=item.split(";");
+                        mots_sorted.push(word_entry[2]); 
+                    });
+                });
+
+                // show sorted results
+                var htlm_entrantes ="";
+                    mots_sorted.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'})).forEach(item => { 
+                        //delete quote
+                        let word = item.substring(1, item.length - 1);
+                        //htlm_entrantes = '<span class="badge badge-warning" title="thems hoverin words"> <a style="color:purple;opacity:0.8;" onclick="getEntryCorrespond('+word+')">'+ word +' </span> &nbsp;&nbsp;';
+                        htlm_entrantes = '<span class="badge badge-warning" title="thems hoverin words"> <a style="color:purple;opacity:0.8;" href="http://localhost/e-app/?word='+word+'">'+ word +' </span> &nbsp;&nbsp;';
+                        document.getElementById('ba').innerHTML += htlm_entrantes;
+                        
+                    });
+
+
+
+
+
+                
+                                        
+                //$("#ba").html(entries);
+
+
+            },
+            error: function(data) {
+                alert("error : " + data[0]);
+            }
+        });
+    
+}
+
+function getEntryCorrespond(word) {
+   getWordDescription(word);
+   /*
     document.getElementById("ba").innerHTML = "";
     document.getElementById("definition").innerHTML = "";
     
     document.getElementById("spinner").style.display = "";
     var word = document.getElementById("searchedWord").value;
-    
-    $.ajax({
-        url: 'http://localhost/e-app/server/index.php',
-        type: 'GET',
-        data: 'word=' + word,
-
-        success: function(data) {
-            document.getElementById("spinner").style.display = "none";
-            document.getElementById("searchedWord").value = "";
-            //$("#ba").html(data);
-            //console.log(data);
-            //var htmlTagRe = /<\/?[\w\s="/.':;#-\/\?]+>/gi;
-            //var plainText = html.replace(htmlTagRe, '');
-            //var str = "The rain in SPAIN stays mainly in the plain";
-            //var res = data.match(//<\s*def[^>]*>(.*?)<\s*/\s*def>/g);
-            //var res = data.match(/(e;[0-9]+;\'[\w\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.+>=&;:?! -]+\';[0-9]+;[0-9]+.*)|(r;[0-9]+;[0-9]+;[0-9]+;[0-9]+;[0-9]+)/m);
-            
-            //var str = "<def><br />  Université. (forme utilisée surtout en Belgique)</def>";
-            
-
-            var str = data.replace(/(\r\n|\n|\r)/gm," ");
-            var definitions = str.match(/<def>(.*?)<\/def>/g).map(function(val){
-                                        return val.replace(/<\/?def>/g,'');
-                                        });
-            //definitions.forEach(item => console.log(item));
-            
-            definitions.forEach(item => {
-                var data = '<div class="alert alert-primary" role="alert"> '+item+'</div>';
-                document.getElementById('definition').innerHTML += data;
-
-            });
-
-            str = data.replace(/(\r\n|\n|\r)/gm," ");
-
-            //Les entries
-            var entries = str.match(/(e;[0-9]+;\'[\w\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.+>=&;:?! -]+\';[0-9]+;[0-9]+.*)|(r;[0-9]+;[0-9]+;[0-9]+;[0-9]+;[0-9]+)/g).map(function(val){
-                return val.replace(/<\/?def>/g,'');
-                });
-            var all_entries=entries.toString().split("<br>");
-            var IdFirstWord = all_entries[0].split(";")[1];
-            //console.log(IdFirstWord)
-            
-
-            //recupérer es id des relations entrantes
-            var rel_entrantes = str.match(new RegExp("(r;[0-9]+;[0-9]+;"+IdFirstWord+";[0-9]+;[0-9]+)",'g')).map(function(val){
-                return val.replace(/<\/?def>/g,'');
-                });
-                //console.log(rel_entrantes);
-            //$("#ba").html(rel_entrantes);
-
-            // IDs relations entrantes
-            var filtred_entries = [];
-            rel_entrantes.forEach(item => {
-                var one_entry=item.split(";");
-                filtred_entries.push(one_entry[2]); 
-            });
-
-    
-            /**
-             * Trier le résultat de recherche
-             */
-            //Mots de relations entrantes;
-            filtred_entries.slice(1, 40).forEach(item => {
-                var correspond_entries = str.match(new RegExp("(e;"+item+";.*;[0-9]+;[0-9]+)",'g')).map(function(val){
-                    return val.replace(/<\/?def>/g,'');
-                });
-
-                var mots_sorted = [];
-                correspond_entries.forEach(item => {
-                    var word_entry=item.split(";");
-                    mots_sorted.push(word_entry[2]); 
-                });
-                var htlm_entrantes ="";
-                mots_sorted.forEach(item => { 
-                    htlm_entrantes = '<span class="badge badge-warning"> <a style="color:purple;opacity:0.8;" href="http://www.jeuxdemots.org/diko.php?gotermrel='+ item +'">'+ item +' </span> &nbsp;&nbsp;';
-                    document.getElementById('ba').innerHTML += htlm_entrantes;
-                    
-                });
-                //document.getElementById('ba').innerHTML = mots_sorted;
-                
-
-                //console.log(correspond_entries);
-
-                //var data = '<span class="badge badge-warning"> <a style="color:purple;opacity:0.8;" href="http://www.jeuxdemots.org/diko.php?gotermrel='+ item +'">'+ item +' </span> &nbsp;&nbsp;';
-                //document.getElementById('ba').innerHTML += data;
-            });
-
-
-
-
-
-            
-                                      
-            //$("#ba").html(entries);
-
-
-        },
-        error: function(data) {
-            alert("error : " + data[0]);
-        }
-    });
+    */
 }
 
 function writeDataInFile(data) {

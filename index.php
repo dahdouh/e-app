@@ -9,9 +9,10 @@
         <!-- <link href="assets/css/bootstrap.min.css" rel="stylesheet" media="screen"> -->
         <!-- My style -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
-
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+        <script src="http://code.jquery.com/jquery.js"></script>
+        <script src="assets/js/parser.js"></script>
 
     </head>
     <body>
@@ -37,15 +38,34 @@
           <div class="card-body">
             <h5 class="card-title"></h5>
             
-              <div class="form-inline form-group" role="search">
-                <label for="inputPassword6">Veuillez taper le mot chercher :  &nbsp;&nbsp;&nbsp;&nbsp;  </label>
-                <input type="text" id="searchedWord" class="form-control" placeholder="Search">
-                <button type="button" class="btn btn-success" onclick="getWordDescription()">
-                  Chercher
-                </button>
-              </div>
-
+              <div role="search">
+                  <div class="form-inline form-group">
+                      <label for="inputPassword6">Veuillez taper le mot chercher :  &nbsp;&nbsp;&nbsp;&nbsp;  </label>
+                      <input type="text" id="searchedWord" class="form-control" placeholder="Search">
+                  </div>
+                  <div class="form-inline form-group">
+                      <label for="exampleFormControlSelect1">Type de relation: &nbsp;&nbsp; </label>
+                      <select class="form-control" id="type_relation">
+                      <option value="-1"></option>
+                      <option value="0">r_associated</option>
+                        <option value="5">r_syn</option>
+                        <option value="6">r_isa</option>
+                        <option value="7">r_anto</option>
+                        <option value="8">r_hypo</option>
+                        <option value="9">r_has_part</option>
+                        <option value="15">r_lieu</option>
+                        <option value="17">r_carac</option>
+                        <option value="32">r_sentiment</option>
+                        <option value="41">r_conseq</option>
             
+                      </select>
+                      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 
+                      
+                      <button type="button" class="btn btn-success" onclick="getWordDescription()">
+                        Chercher
+                      </button>
+                  </div>
+              </div>            
 
           </div>
         </div>
@@ -53,6 +73,14 @@
         <i id="spinner" style="display:none;" class="fa fa-spinner fa-5x fa-pulse"></i>
 
         <br/>
+
+        <div class="card-header" id="WordPut">
+          <h5 class="mb-0">
+            <div id="PutWord"> 
+              
+            </div>
+          </h5>
+        </div>
 
         <div id="accordion">
           <div class="card">
@@ -75,7 +103,7 @@
             <div class="card-header" id="headingTwo">
               <h5 class="mb-0">
                 <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                  Relations entrantes
+                  Relations
                 </button>
               </h5>
             </div>
@@ -85,11 +113,28 @@
               </div>
             </div>
           </div>
+
+          <?php
+    $word = "";
+    if(isset($_GET['word'])){
+        $word = $_GET["word"];
+      ?>
+    
+      <script type="text/javascript">
+        var word = '<?php echo $word; ?>';
+        console.log(word);
+        getWordDescription(word);
+       </script>
+
+      <?php
+    }
+    ?>
+          <!--
           <div class="card">
             <div class="card-header" id="headingThree">
               <h5 class="mb-0">
                 <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                  Relations sortantes
+                  Relations
                 </button>
               </h5>
             </div>
@@ -99,6 +144,7 @@
               </div>
             </div>
           </div>
+          -->
         </div>
 <!--
         <div id="result" class="card">
@@ -119,9 +165,9 @@
 
      
           <footer>
-              <script src="http://code.jquery.com/jquery.js"></script>
+              
               <!-- <script src="assets/js/bootstrap.min.js"></script> -->
-              <script src="assets/js/parser.js"></script>
+              
               <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
               <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
