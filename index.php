@@ -38,15 +38,34 @@
           <div class="card-body">
             <h5 class="card-title"></h5>
             
-              <div class="form-inline form-group" role="search">
-                <label for="inputPassword6">Veuillez taper le mot chercher :  &nbsp;&nbsp;&nbsp;&nbsp;  </label>
-                <input type="text" id="searchedWord" class="form-control" placeholder="Search">
-                <button type="button" class="btn btn-success" onclick="getWordDescription()">
-                  Chercher
-                </button>
-              </div>
-
+              <div role="search">
+                  <div class="form-inline form-group">
+                      <label for="inputPassword6">Veuillez taper le mot chercher :  &nbsp;&nbsp;&nbsp;&nbsp;  </label>
+                      <input type="text" id="searchedWord" class="form-control" placeholder="Search">
+                  </div>
+                  <div class="form-inline form-group">
+                      <label for="exampleFormControlSelect1">Type de relation: &nbsp;&nbsp; </label>
+                      <select class="form-control" id="type_relation">
+                      <option value="-1"></option>
+                      <option value="0">r_associated</option>
+                        <option value="5">r_syn</option>
+                        <option value="6">r_isa</option>
+                        <option value="7">r_anto</option>
+                        <option value="8">r_hypo</option>
+                        <option value="9">r_has_part</option>
+                        <option value="15">r_lieu</option>
+                        <option value="17">r_carac</option>
+                        <option value="32">r_sentiment</option>
+                        <option value="41">r_conseq</option>
             
+                      </select>
+                      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 
+                      
+                      <button type="button" class="btn btn-success" onclick="getWordDescription()">
+                        Chercher
+                      </button>
+                  </div>
+              </div>            
 
           </div>
         </div>

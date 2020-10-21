@@ -12,9 +12,10 @@ $(document).ready(function(){
 function getWordDescription(search) {
         document.getElementById("ba").innerHTML = "";
         document.getElementById("definition").innerHTML = "";
-        
+
         document.getElementById("spinner").style.display = "";
 
+        var type_relation = document.getElementById("type_relation").value;
         let word ="" ;
         if(typeof search !== 'undefined' || document.getElementById("searchedWord").value == ''){  
             word = search;
@@ -56,28 +57,54 @@ function getWordDescription(search) {
 
                 str = data.replace(/(\r\n|\n|\r)/gm," ");
 
-                //Les entries
-                var entries = str.match(/(e;[0-9]+;\'[\w\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.+>=&;:?! -]+\';[0-9]+;[0-9]+.*)|(r;[0-9]+;[0-9]+;[0-9]+;[0-9]+;[0-9]+)/g).map(function(val){
+                var entries =[];
+                var all_entries = [];
+                var IdFirstWord = "";
+                var rel_sortantes = [];
+                var rel_entrantes = [];
+                
+                //toutes les entrées
+                entries = str.match(/(e;[0-9]+;\'[\w\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.+>=&;:?! -]+\';[0-9]+;[0-9]+.*)|(r;[0-9]+;[0-9]+;[0-9]+;[0-9]+;[0-9]+)/g).map(function(val){
                     return val.replace(/<\/?def>/g,'');
                     });
-                var all_entries=entries.toString().split("<br>");
-                var IdFirstWord = all_entries[0].split(";")[1];
+                
+                all_entries = entries.toString().split("<br>");
+                IdFirstWord = all_entries[0].split(";")[1];
+
+                //si l'utilisateur n'a choisi aucun tyoe de relation
+                if( type_relation === '-1'){                      
+                    //relation sortantes
+                    rel_sortantes = str.match(new RegExp('(r;[0-9]+;[0-9]+;'+IdFirstWord+';[0-9]+;[0-9]+)','g')).map(function(val){
+                        return val.replace(/<\/?def>/g,'');
+                    }); 
+                    //relation entrantes
+                    rel_entrantes = str.match(new RegExp('(r;[0-9]+;'+IdFirstWord+';[0-9]+;[0-9]+;[0-9]+)','g')).map(function(val){
+                        return val.replace(/<\/?def>/g,'');
+                        });
+                    console.log(rel_sortantes);
+
+                } else {
+                    //relation sortantes
+                    rel_sortantes = str.match(new RegExp('(r;[0-9]+;[0-9]+;'+IdFirstWord+';'+ type_relation +';[0-9]+)','g')).map(function(val){
+                        return val.replace(/<\/?def>/g,'');
+                    }); 
+                    //relation entrantes
+                    rel_entrantes = str.match(new RegExp('(r;[0-9]+;'+IdFirstWord+';[0-9]+;'+ type_relation +';[0-9]+)','g')).map(function(val){
+                        return val.replace(/<\/?def>/g,'');
+                        });
+
+                }
+                
                 //console.log(IdFirstWord)
                 
                 var filtred_entries = [];
-                //relations sortantes
-                var rel_sortantes = str.match(new RegExp('(r;[0-9]+;[0-9]+;'+IdFirstWord+';[0-9]+;[0-9]+)','g')).map(function(val){
-                    return val.replace(/<\/?def>/g,'');
-                    });
+                //relations sortantes       
                 rel_sortantes.forEach(item => {
                     var one_entry=item.split(";");
                     filtred_entries.push(one_entry[2]); 
                 });
 
                 //relations entrantes
-                var rel_entrantes = str.match(new RegExp('(r;[0-9]+;'+IdFirstWord+';[0-9]+;[0-9]+;[0-9]+)','g')).map(function(val){
-                    return val.replace(/<\/?def>/g,'');
-                    });
                 rel_entrantes.forEach(item => {
                     var one_entry=item.split(";");
                     filtred_entries.push(one_entry[3]); 
@@ -86,7 +113,7 @@ function getWordDescription(search) {
     
         
                 /**
-                 * Trier le résultat de recherche
+                 * récuperer les mots comme résultat de recherche
                  */
                 //Mots de relations entrantes;
                 var mots_sorted = [];
