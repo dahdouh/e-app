@@ -122,7 +122,7 @@ function getWordDescription(search) {
             //Mots de relations entrantes;
 
 
-            filtred_entries.slice(1, 40).forEach(item => {
+            filtred_entries.slice(1, 100).forEach(item => {
                 var num_word = item.split('::')[0]; // eviter valuer vide
                 var poids_word = item.split('::')[1];
 
