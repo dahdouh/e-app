@@ -46,8 +46,8 @@
                   <div class="form-inline form-group">
                       <label for="exampleFormControlSelect1">Type de relation: &nbsp;&nbsp; </label>
                       <select class="form-control" id="type_relation">
-                      <option value="-1"></option>
-                      <option value="0">r_associated</option>
+                        <option value="-1"></option>
+                        <option value="0">r_associated</option>
                         <option value="5">r_syn</option>
                         <option value="6">r_isa</option>
                         <option value="7">r_anto</option>
@@ -61,7 +61,7 @@
                       </select>
                       &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 
                       
-                      <button type="button" class="btn btn-success" onclick="getWordDescription()">
+                      <button type="button" class="btn btn-success" onclick="startReasearch()">
                         Chercher
                       </button>
                   </div>
@@ -73,14 +73,6 @@
         <i id="spinner" style="display:none;" class="fa fa-spinner fa-5x fa-pulse"></i>
 
         <br/>
-
-        <div class="card-header" id="WordPut">
-          <h5 class="mb-0">
-            <div id="PutWord"> 
-              
-            </div>
-          </h5>
-        </div>
 
         <div id="accordion">
           <div class="card">
@@ -101,11 +93,20 @@
           </div>
           <div class="card">
             <div class="card-header" id="headingTwo">
-              <h5 class="mb-0">
-                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                  Relations
-                </button>
-              </h5>
+            <div class="form-inline form-group">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Relations
+                  </button>
+                <h5>
+
+                <select  class="form-control" name="sortList" id="sort_type" onchange="sortRelations()">
+                    <option value="-1"></option>
+                    <option value="alpha"> Alphabétique</option>
+                    <option value="poids">Poids</option>
+                </select>
+              
+              </div>
             </div>
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
               <div class="card-body">
@@ -122,9 +123,9 @@
     
       <script type="text/javascript">
         var word = '<?php echo $word; ?>';
-        console.log(word);
+        //console.log(word);
         getWordDescription(word);
-       </script>
+      </script>
 
       <?php
     }
